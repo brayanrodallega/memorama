@@ -1,0 +1,121 @@
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h1>🧠 Memorama</h1>
+          <h2>Crear Cuenta</h2>
+        </div>
+
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
+          @if (errorMessage()) {
+            <div class="error-message">
+              {{ errorMessage() }}
+            </div>
+          }
+
+          <div class="form-group">
+            <label for="name">Nombre Completo</label>
+            <input
+              id="name"
+              type="text"
+              formControlName="name"
+              class="form-control"
+              [class.error]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched"
+              placeholder="Tu nombre completo"
+            >
+            @if (registerForm.get('name')?.invalid && registerForm.get('name')?.touched) {
+              <div class="field-error">
+                @if (registerForm.get('name')?.errors?.['required']) {
+                  El nombre es requerido
+                }
+                @if (registerForm.get('name')?.errors?.['minlength']) {
+                  El nombre debe tener al menos 2 caracteres
+                }
+              </div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="email">Correo Electrónico</label>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              class="form-control"
+              [class.error]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+              placeholder="tu@email.com"
+            >
+            @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+              <div class="field-error">
+                @if (registerForm.get('email')?.errors?.['required']) {
+                  El correo es requerido
+                }
+                @if (registerForm.get('email')?.errors?.['email']) {
+                  Ingresa un correo válido
+                }
+              </div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="password">Contraseña</label>
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              class="form-control"
+              [class.error]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+              placeholder="••••••••"
+            >
+            @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+              <div class="field-error">
+                @if (registerForm.get('password')?.errors?.['required']) {
+                  La contraseña es requerida
+                }
+                @if (registerForm.get('password')?.errors?.['minlength']) {
+                  La contraseña debe tener al menos 6 caracteres
+                }
+              </div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Confirmar Contraseña</label>
+            <input
+              id="confirmPassword"
+              type="password"
+              formControlName="password_confirmation"
+              class="form-control"
+              [class.error]="registerForm.get('password_confirmation')?.invalid && registerForm.get('password_confirmation')?.touched"
+              placeholder="••••••••"
+            >
+            @if (registerForm.get('password_confirmation')?.invalid && registerForm.get('password_confirmation')?.touched) {
+              <div class="field-error">
+                @if (registerForm.get('password_confirmation')?.errors?.['required']) {
+                  Confirma tu contraseña
+                }
+                @if (registerForm.get('password_confirmation')?.errors?.['mismatch']) {
+                  Las contraseñas no coinciden
+                }
+              </div>
+            }
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="registerForm.invalid || isLoading()"
+          >
+            @if (isLoading()) {
+              <span class="spinner"></span>
+              Creando cuenta...
+            } @else {
+              Crear Cuenta
+            }
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          <p>¿Ya tienes cuenta? <a routerLink="/auth/login">Inicia sesión aquí</a></p>
+        </div>
+      </div>
+    </div> 

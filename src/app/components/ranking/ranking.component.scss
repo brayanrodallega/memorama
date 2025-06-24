@@ -1,0 +1,639 @@
+.ranking-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.ranking-header {
+  background: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem 0;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+
+  h1 {
+    color: #667eea;
+    margin: 0;
+    font-size: 2rem;
+  }
+}
+
+.ranking-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.ranking-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+}
+
+.tab-button {
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 12px;
+  background: white;
+  color: #666;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  &.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  &:hover:not(.active) {
+    background: #f8f9fa;
+    transform: translateY(-2px);
+  }
+}
+
+.podium-section {
+  margin-bottom: 3rem;
+}
+
+.podium {
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.podium-place {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.podium-player {
+  position: relative;
+  margin-bottom: 1rem;
+
+  h3 {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+    font-size: 1.2rem;
+  }
+
+  p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+  }
+}
+
+.crown {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2rem;
+  z-index: 1;
+}
+
+.player-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  margin: 0 auto 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+  &.champion {
+    width: 100px;
+    height: 100px;
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    color: #333;
+  }
+
+  &.small {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+}
+
+.podium-base {
+  background: white;
+  border-radius: 12px 12px 0 0;
+  padding: 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.first-place {
+  height: 120px;
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+}
+
+.second-place {
+  height: 100px;
+  background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+}
+
+.third-place {
+  height: 80px;
+  background: linear-gradient(135deg, #cd7f32 0%, #daa520 100%);
+}
+
+.place-number {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.medal {
+  font-size: 2rem;
+}
+
+.ranking-list-section {
+  margin-bottom: 2rem;
+
+  h2 {
+    color: #333;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+}
+
+.ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ranking-item {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  &.current-user {
+    border: 3px solid #667eea;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+  }
+
+  &.top-three {
+    border-left: 5px solid #ffd700;
+  }
+
+  .player-avatar {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+}
+
+.rank-number {
+  width: 60px;
+  text-align: center;
+}
+
+.medal-emoji {
+  font-size: 2rem;
+}
+
+.rank {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.player-info {
+  flex: 1;
+
+  h4 {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+    font-size: 1.2rem;
+  }
+
+  p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+  }
+}
+
+.player-stats {
+  display: flex;
+  gap: 2rem;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-value {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+.matches-section {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    color: #333;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+}
+
+.matches-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.match-card {
+  border: 1px solid #e1e1e1;
+  border-radius: 15px;
+  padding: 1.5rem;
+  background: #fafafa;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.match-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e1e1e1;
+}
+
+.match-info {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.match-date {
+  font-weight: 600;
+  color: #333;
+}
+
+.match-level {
+  background: #667eea;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.match-time {
+  color: #666;
+  font-weight: 500;
+}
+
+/* Partida Individual */
+.single-player-match {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #e8f5e8 0%, #f0f9ff 100%);
+  padding: 1rem;
+  border-radius: 10px;
+  border-left: 4px solid #10b981;
+}
+
+.single-player-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.player-avatar.solo {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.player-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.player-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.match-type {
+  color: #059669;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.single-player-result {
+  display: flex;
+  gap: 2rem;
+}
+
+.result-item {
+  text-align: center;
+}
+
+.result-label {
+  display: block;
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+}
+
+.result-value {
+  display: block;
+  font-weight: bold;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+/* Partida Multijugador */
+.multiplayer-match {
+  display: grid;
+  gap: 1rem;
+}
+
+.match-player {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+
+  &.winner {
+    background: linear-gradient(135deg, #fff3cd 0%, #fef7e3 100%);
+    border-left: 4px solid #ffc107;
+  }
+
+  &.tie {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border-left: 4px solid #2196f3;
+  }
+}
+
+.player-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.player-email {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.vs-info {
+  color: #28a745;
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.player-result {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.aciertos,
+.tiempo {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.winner-badge {
+  font-size: 0.8rem;
+  color: #d4a100;
+  font-weight: 600;
+}
+
+.tie-badge {
+  font-size: 0.8rem;
+  color: #1976d2;
+  font-weight: 600;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  &:hover {
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid #667eea;
+  color: #667eea;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+
+  p {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+}
+
+// Estilos para pestañas de modo de juego
+.match-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #6c757d;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  &:hover {
+    background: #e9ecef;
+    color: #495057;
+  }
+
+  &.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  }
+}
+
+.mode-badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+
+  &.single {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+  }
+
+  &.multi {
+    background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);
+    color: white;
+  }
+}
+
+.match-card {
+  &.single-player {
+    border-left: 4px solid #28a745;
+    
+    .single-player-match {
+      background: #f8fff9;
+    }
+  }
+
+  &.multiplayer {
+    border-left: 4px solid #007bff;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .ranking-tabs {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .podium {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .podium-place {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .ranking-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .player-stats {
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .matches-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .match-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+
+  .match-player {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .match-tabs {
+    flex-direction: column;
+  }
+
+  .tab-button {
+    flex: none;
+  }
+} 

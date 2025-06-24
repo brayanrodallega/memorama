@@ -1,0 +1,310 @@
+<div class="ranking-container">
+  <!-- Header -->
+  <header class="ranking-header">
+    <div class="header-content">
+      <h1>🏆 Ranking de Jugadores</h1>
+      <button routerLink="/" class="btn btn-outline">
+        ← Volver al Inicio
+      </button>
+    </div>
+  </header>
+
+  <div class="ranking-content">
+    <!-- Ranking Tabs -->
+    <div class="ranking-tabs">
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab() === 'game'"
+        (click)="setActiveTab('game')"
+      >
+        🎮 Mi Juego
+      </button>
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab() === 'global'"
+        (click)="setActiveTab('global')"
+      >
+        🌍 Global
+      </button>
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab() === 'matches'"
+        (click)="setActiveTab('matches')"
+      >
+        📊 Partidas
+      </button>
+    </div>
+
+    <!-- Podium for Top 3 -->
+    @if (activeTab() !== 'matches' && getTopThree().length > 0) {
+      <section class="podium-section">
+        <div class="podium">
+          <!-- Second Place -->
+          @if (getTopThree()[1]) {
+            <div class="podium-place second">
+              <div class="podium-player">
+                <div class="player-avatar">
+                  {{ getTopThree()[1].user.name.charAt(0).toUpperCase() }}
+                </div>
+                <h3>{{ getTopThree()[1].user.name }}</h3>
+                <p>{{ getTopThree()[1].totalMatches }} aciertos</p>
+                <p>{{ Math.round(getTopThree()[1].winRate) }}% éxito</p>
+              </div>
+              <div class="podium-base second-place">
+                <span class="place-number">2</span>
+                <span class="medal">🥈</span>
+              </div>
+            </div>
+          }
+
+          <!-- First Place -->
+          @if (getTopThree()[0]) {
+            <div class="podium-place first">
+              <div class="podium-player">
+                <div class="crown">👑</div>
+                <div class="player-avatar champion">
+                  {{ getTopThree()[0].user.name.charAt(0).toUpperCase() }}
+                </div>
+                <h3>{{ getTopThree()[0].user.name }}</h3>
+                <p>{{ getTopThree()[0].totalMatches }} aciertos</p>
+                <p>{{ Math.round(getTopThree()[0].winRate) }}% éxito</p>
+              </div>
+              <div class="podium-base first-place">
+                <span class="place-number">1</span>
+                <span class="medal">🥇</span>
+              </div>
+            </div>
+          }
+
+          <!-- Third Place -->
+          @if (getTopThree()[2]) {
+            <div class="podium-place third">
+              <div class="podium-player">
+                <div class="player-avatar">
+                  {{ getTopThree()[2].user.name.charAt(0).toUpperCase() }}
+                </div>
+                <h3>{{ getTopThree()[2].user.name }}</h3>
+                <p>{{ getTopThree()[2].totalMatches }} aciertos</p>
+                <p>{{ Math.round(getTopThree()[2].winRate) }}% éxito</p>
+              </div>
+              <div class="podium-base third-place">
+                <span class="place-number">3</span>
+                <span class="medal">🥉</span>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Ranking List with Pagination -->
+    @if (activeTab() !== 'matches') {
+      <section class="ranking-list-section">
+        <h2>{{ activeTab() === 'game' ? 'Ranking de Mi Juego' : 'Ranking Global' }}</h2>
+        <div class="ranking-list">
+          @for (player of paginatedRanking().items; track player.user.id; let i = $index) {
+            <div 
+              class="ranking-item" 
+              [class.current-user]="isCurrentUser(player.user.id)"
+              [class.top-three]="getRankPosition(i) <= 3"
+            >
+              <div class="rank-number">
+                @if (getRankPosition(i) <= 3) {
+                  <span class="medal-emoji">{{ getMedalEmoji(getRankPosition(i) - 1) }}</span>
+                } @else {
+                  <span class="rank">{{ getRankPosition(i) }}</span>
+                }
+              </div>
+              
+              <div class="player-avatar">
+                {{ player.user.name.charAt(0).toUpperCase() }}
+              </div>
+              
+              <div class="player-info">
+                <h4>{{ player.user.name }}</h4>
+                <p>{{ player.user.email }}</p>
+              </div>
+              
+              <div class="player-stats">
+                <div class="stat">
+                  <span class="stat-value">{{ player.totalMatches }}</span>
+                  <span class="stat-label">Aciertos</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-value">{{ player.totalGames }}</span>
+                  <span class="stat-label">Partidas</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-value">{{ Math.round(player.winRate) }}%</span>
+                  <span class="stat-label">Éxito</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-value">{{ formatTime(player.bestTime) }}</span>
+                  <span class="stat-label">Mejor Tiempo</span>
+                </div>
+              </div>
+            </div>
+          } @empty {
+            <div class="empty-state">
+              <p>No hay jugadores en este ranking</p>
+            </div>
+          }
+        </div>
+
+        <!-- Paginación para ranking -->
+        <app-pagination
+          [currentPage]="paginatedRanking().pagination.currentPage"
+          [totalPages]="paginatedRanking().pagination.totalPages"
+          [totalItems]="paginatedRanking().pagination.totalItems"
+          [itemsPerPage]="paginatedRanking().pagination.itemsPerPage"
+          [startIndex]="paginatedRanking().pagination.startIndex"
+          [endIndex]="paginatedRanking().pagination.endIndex"
+          [hasNextPage]="paginatedRanking().pagination.hasNextPage"
+          [hasPreviousPage]="paginatedRanking().pagination.hasPreviousPage"
+          (pageChange)="onRankingPageChange($event)"
+        ></app-pagination>
+      </section>
+    }
+
+    <!-- Matches List with Tabs -->
+    @if (activeTab() === 'matches') {
+      <section class="matches-section">
+        <h2>Historial de Partidas (Ordenado por Mejor Tiempo)</h2>
+        
+        <!-- Tabs for Match Mode -->
+        <div class="match-tabs">
+          <button 
+            class="tab-button" 
+            [class.active]="activeMatchTab() === 'single'"
+            (click)="setActiveMatchTab('single')">
+            👤 Un Jugador
+          </button>
+          <button 
+            class="tab-button" 
+            [class.active]="activeMatchTab() === 'multi'"
+            (click)="setActiveMatchTab('multi')">
+            👥 Dos Jugadores
+          </button>
+        </div>
+
+        <!-- Match Grid -->
+        <div class="matches-grid">
+          @if (activeMatchTab() === 'single') {
+            <!-- Single Player Matches -->
+            @for (match of paginatedMatches().items; track match.partida.id) {
+              <div class="match-card single-player">
+                <div class="match-header">
+                  <div class="match-info">
+                    <span class="match-date">{{ formatDate(match.partida.fecha) }}</span>
+                    <span class="match-level">{{ match.partida.nivel?.toUpperCase() || 'N/A' }}</span>
+                    <span class="mode-badge single">Un Jugador</span>
+                  </div>
+                  <div class="match-time">
+                    ⏱️ {{ formatTime(match.players[0].tiempo) }}
+                  </div>
+                </div>
+                
+                <div class="match-players">
+                  <div class="single-player-match">
+                    <div class="single-player-info">
+                      <div class="player-avatar solo">
+                        {{ match.players[0].user.name.charAt(0).toUpperCase() }}
+                      </div>
+                      <div class="player-details">
+                        <span class="player-name">{{ match.players[0].user.name }}</span>
+                        <span class="player-email">{{ match.players[0].user.email }}</span>
+                      </div>
+                    </div>
+                    <div class="single-player-result">
+                      <div class="result-item">
+                        <span class="result-label">Aciertos</span>
+                        <span class="result-value">{{ match.players[0].aciertos }}</span>
+                      </div>
+                      <div class="result-item">
+                        <span class="result-label">Tiempo</span>
+                        <span class="result-value">{{ formatTime(match.players[0].tiempo) }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            } @empty {
+              <div class="empty-state">
+                <p>No hay partidas individuales</p>
+              </div>
+            }
+          } @else {
+            <!-- Multiplayer Matches -->
+            @for (match of paginatedMatches().items; track match.partida.id) {
+              <div class="match-card multiplayer">
+                <div class="match-header">
+                  <div class="match-info">
+                    <span class="match-date">{{ formatDate(match.partida.fecha) }}</span>
+                    <span class="match-level">{{ match.partida.nivel?.toUpperCase() || 'N/A' }}</span>
+                    <span class="mode-badge multi">Dos Jugadores</span>
+                  </div>
+                  <div class="match-time">
+                    ⏱️ {{ formatTime(getBestTimeFromMatch(match.players)) }}
+                  </div>
+                </div>
+                
+                <div class="match-players">
+                  <div class="multiplayer-match">
+                    @for (player of match.players; track player.user.id) {
+                      <div class="match-player" 
+                           [class.winner]="player.isWinner"
+                           [class.tie]="player.isTie">
+                        <div class="player-info">
+                          <div class="player-avatar small">
+                            {{ player.user.name.charAt(0).toUpperCase() }}
+                          </div>
+                          <div class="player-details">
+                            <span class="player-name">{{ player.user.name }}</span>
+                            <span class="player-email">{{ player.user.email }}</span>
+                            @if (player.isWinner && match.players.length > 1) {
+                              <span class="vs-info">Ganó contra {{ getOpponentName(match.players, player.user.id || 0) }}</span>
+                            } @else if (player.isTie && match.players.length > 1) {
+                              <span class="vs-info">Empató con {{ getOpponentName(match.players, player.user.id || 0) }}</span>
+                            }
+                          </div>
+                        </div>
+                        <div class="player-result">
+                          <span class="aciertos">{{ player.aciertos }} aciertos</span>
+                          <span class="tiempo">{{ formatTime(player.tiempo) }}</span>
+                          @if (player.isWinner) {
+                            <span class="winner-badge">🏆 Ganador</span>
+                          } @else if (player.isTie) {
+                            <span class="tie-badge">🤝 Empate</span>
+                          }
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            } @empty {
+              <div class="empty-state">
+                <p>No hay partidas multijugador</p>
+              </div>
+            }
+          }
+        </div>
+
+        <!-- Paginación -->
+        @if (paginatedMatches().pagination.totalItems > 0) {
+          <app-pagination
+            [currentPage]="paginatedMatches().pagination.currentPage"
+            [totalPages]="paginatedMatches().pagination.totalPages"
+            [totalItems]="paginatedMatches().pagination.totalItems"
+            [itemsPerPage]="paginatedMatches().pagination.itemsPerPage"
+            [startIndex]="paginatedMatches().pagination.startIndex"
+            [endIndex]="paginatedMatches().pagination.endIndex"
+            [hasNextPage]="paginatedMatches().pagination.hasNextPage"
+            [hasPreviousPage]="paginatedMatches().pagination.hasPreviousPage"
+            (pageChange)="onMatchesPageChange($event)"
+          ></app-pagination>
+        }
+      </section>
+    }
+  </div>
+</div> 

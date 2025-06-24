@@ -1,0 +1,121 @@
+    <div class="setup-container">
+      <div class="setup-card">
+        <div class="setup-header">
+          <h1>🧠 Configurar Partida</h1>
+          <h2>{{ gameMode() === 'single' ? 'Un Jugador' : 'Dos Jugadores' }}</h2>
+        </div>
+
+        <form [formGroup]="setupForm" (ngSubmit)="startGame()" class="setup-form">
+          @if (errorMessage()) {
+            <div class="error-message">
+              {{ errorMessage() }}
+            </div>
+          }
+
+          <!-- Selección de Nivel -->
+          <div class="form-section">
+            <h3>Selecciona el Nivel</h3>
+            <div class="level-grid">
+              @for (level of levels; track level.key) {
+                <div 
+                  class="level-card" 
+                  [class.selected]="selectedLevel() === level.key"
+                  (click)="selectLevel(level.key)"
+                >
+                  <div class="level-icon">{{ level.icon }}</div>
+                  <h4>{{ level.name }}</h4>
+                  <p>{{ level.description }}</p>
+                  <div class="level-stats">
+                    <span>{{ level.config.cardCount }} cartas</span>
+                    @if (gameMode() === 'single') {
+                      <span>{{ level.config.timeLimit! }} seg</span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Configuración de Jugadores -->
+          @if (gameMode() === 'multiplayer') {
+            <div class="form-section">
+              <h3>Segundo Jugador</h3>
+              <div class="form-group">
+                <label for="secondPlayerEmail">Correo del Segundo Jugador</label>
+                <input
+                  id="secondPlayerEmail"
+                  type="email"
+                  formControlName="secondPlayerEmail"
+                  class="form-control"
+                  [class.error]="setupForm.get('secondPlayerEmail')?.invalid && setupForm.get('secondPlayerEmail')?.touched"
+                  placeholder="email@ejemplo.com"
+                >
+                @if (setupForm.get('secondPlayerEmail')?.invalid && setupForm.get('secondPlayerEmail')?.touched) {
+                  <div class="field-error">
+                    @if (setupForm.get('secondPlayerEmail')?.errors?.['required']) {
+                      El correo del segundo jugador es requerido
+                    }
+                    @if (setupForm.get('secondPlayerEmail')?.errors?.['email']) {
+                      Ingresa un correo válido
+                    }
+                  </div>
+                }
+              </div>
+              
+              @if (secondPlayerFound()) {
+                <div class="player-found">
+                  <div class="player-info">
+                    <span class="check-icon">✅</span>
+                    <span>{{ secondPlayerFound()?.name }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Información del Juego -->
+          <div class="game-info">
+            <h3>Información del Juego</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Modo:</span>
+                <span class="info-value">{{ gameMode() === 'single' ? 'Un Jugador' : 'Dos Jugadores' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Nivel:</span>
+                <span class="info-value">{{ getLevelName(selectedLevel()) }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Cartas:</span>
+                <span class="info-value">{{ getSelectedLevelConfig()?.cardCount || 0 }} cartas</span>
+              </div>
+              @if (gameMode() === 'single') {
+                <div class="info-item">
+                  <span class="info-label">Tiempo límite:</span>
+                  <span class="info-value">{{ getSelectedLevelConfig()?.timeLimit || 0 }} segundos</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Botones -->
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" routerLink="/">
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="!canStartGame() || isLoading()"
+            >
+              @if (isLoading()) {
+                <span class="spinner"></span>
+                Iniciando...
+              } @else {
+                🎮 Iniciar Juego
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div> 

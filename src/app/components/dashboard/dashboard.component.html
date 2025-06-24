@@ -1,0 +1,108 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="brand">
+        <h1>🧠 Memorama</h1>
+      </div>
+      <div class="user-menu">
+        <span class="welcome-text">¡Hola, {{ currentUser()?.name }}!</span>
+        <button class="btn btn-outline" (click)="logout()">
+          Cerrar Sesión
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="dashboard-main">
+    <div class="container">
+      <!-- Hero Section -->
+      <section class="hero-section">
+        <h2>¿Listo para un nuevo desafío?</h2>
+        <p>Pon a prueba tu memoria con nuestro divertido juego de cartas</p>
+      </section>
+
+      <!-- Quick Stats -->
+      <section class="quick-stats">
+        <div class="stat-card">
+          <div class="stat-icon">🎯</div>
+          <div class="stat-content">
+            <h3>{{ globalStats()?.totalGames || 0 }}</h3>
+            <p>Partidas Jugadas</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-content">
+            <h3>{{ globalStats()?.totalPlayers || 0 }}</h3>
+            <p>Jugadores Activos</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🏆</div>
+          <div class="stat-content">
+            <h3>{{ Math.round(globalStats()?.averageMatchesPerGame || 0) }}</h3>
+            <p>Promedio de Aciertos</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Game Modes -->
+      <section class="game-modes">
+        <h3>Modos de Juego</h3>
+        <div class="modes-grid">
+          <div class="mode-card" (click)="startSinglePlayerGame()">
+            <div class="mode-icon">👤</div>
+            <h4>Un Jugador</h4>
+            <p>Juega solo y supera tus propios records</p>
+            <button class="btn btn-primary">Jugar Solo</button>
+          </div>
+          <div class="mode-card" (click)="startMultiplayerGame()">
+            <div class="mode-icon">👥</div>
+            <h4>Dos Jugadores</h4>
+            <p>Desafía a un amigo por turnos</p>
+            <button class="btn btn-primary">Multijugador</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Top Players -->
+      <section class="top-players">
+        <h3>Top Jugadores</h3>
+        <div class="players-list">
+          @for (player of topPlayers(); track player.user.id) {
+            <div class="player-item">
+              <div class="player-rank">{{ $index + 1 }}</div>
+              <div class="player-info">
+                <span class="player-name">{{ player.user.name }}</span>
+                <span class="player-stats">{{ player.totalMatches }} aciertos • {{ player.totalGames }} partidas</span>
+              </div>
+              <div class="player-score">{{ Math.round(player.winRate) }}%</div>
+            </div>
+          } @empty {
+            <div class="empty-state">
+              <p>¡Sé el primero en jugar!</p>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Navigation -->
+      <section class="navigation-section">
+        <div class="nav-grid">
+          <a routerLink="/stats" class="nav-card">
+            <div class="nav-icon">📊</div>
+            <h4>Estadísticas</h4>
+            <p>Ver estadísticas detalladas</p>
+          </a>
+          <a routerLink="/ranking" class="nav-card">
+            <div class="nav-icon">🏆</div>
+            <h4>Ranking</h4>
+            <p>Tabla de posiciones</p>
+          </a>
+        </div>
+      </section>
+    </div>
+  </main>
+</div> 

@@ -1,0 +1,183 @@
+<div class="game-container">
+  @if (currentGame()) {
+    <!-- Game Header -->
+    <header class="game-header">
+      <div class="header-content">
+        <div class="game-info">
+          <h1>🧠 Memorama</h1>
+          <div class="game-details">
+            <span class="level">{{ currentGame()?.level?.toUpperCase() }}</span>
+            <span class="mode">{{ currentGame()?.mode === 'single' ? 'Un Jugador' : 'Dos Jugadores' }}</span>
+          </div>
+        </div>
+        
+        <div class="game-stats">
+          <div class="stat-item">
+            <span class="stat-label">Tiempo</span>
+            <span class="stat-value timer" [class.warning]="isTimeRunningOut()">
+              {{ formatTime(gameTime()) }}
+              @if (currentGame()?.config?.timeLimit && currentGame()?.mode === 'single') {
+                <span class="time-limit">/ {{ formatTime(currentGame()!.config.timeLimit || 0) }}</span>
+              }
+            </span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Movimientos</span>
+            <span class="stat-value">{{ currentGame()?.moves || 0 }}</span>
+          </div>
+        </div>
+
+        <div class="game-actions">
+          <button class="btn btn-icon" (click)="pauseGame()" title="Pausar">
+            {{ isPaused() ? '▶️' : '⏸️' }}
+          </button>
+          <button class="btn btn-icon" (click)="resetGame()" title="Reiniciar">
+            🔄
+          </button>
+          <button class="btn btn-outline" (click)="quitGame()">
+            Salir
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Players Info -->
+    <section class="players-section">
+      <div class="players-container">
+        @for (player of currentGame()?.players; track player.email) {
+          <div class="player-card" [class.active]="player.isCurrentPlayer">
+            <div class="player-avatar">
+              {{ player.name.charAt(0).toUpperCase() }}
+            </div>
+            <div class="player-info">
+              <h3>{{ player.name }}</h3>
+              <div class="player-stats">
+                <span>{{ player.matches }} aciertos</span>
+                <span>{{ player.score }} puntos</span>
+              </div>
+            </div>
+            @if (player.isCurrentPlayer && currentGame()?.mode === 'multiplayer') {
+              <div class="current-player-indicator">
+                <span>🎯 Tu turno</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Game Board -->
+    <section class="game-board-section">
+      <div class="game-board" [style.--cols]="getBoardCols()">
+        @for (card of currentGame()?.cards; track card.id) {
+          <div 
+            class="card" 
+            [class.flipped]="card.isFlipped"
+            [class.matched]="card.isMatched"
+            [class.disabled]="!canFlipCard()"
+            (click)="flipCard(card.id)"
+          >
+            <div class="card-inner">
+              <div class="card-front">
+                <span class="card-back-pattern">❓</span>
+              </div>
+              <div class="card-back">
+                <span class="card-emoji">{{ card.imageUrl }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Game Status -->
+    @if (currentGame()?.status === 'finished') {
+      <div class="game-finished-overlay">
+        <div class="game-finished-modal">
+          <h2>🎉 ¡Juego Terminado!</h2>
+          
+          @if (currentGame()?.mode === 'single') {
+            <div class="single-result">
+              @if (isTimeUp()) {
+                <h3>⏰ ¡Tiempo Agotado!</h3>
+                <p class="time-up-message">Se acabó el tiempo, pero lograste algunos aciertos.</p>
+              } @else {
+                <h3>🎉 ¡Felicidades!</h3>
+                <p class="success-message">Completaste el juego exitosamente.</p>
+              }
+              <div class="final-stats">
+                <div class="stat">
+                  <span class="label">Tiempo:</span>
+                  <span class="value">{{ formatTime(gameTime()) }}</span>
+                </div>
+                <div class="stat">
+                  <span class="label">Movimientos:</span>
+                  <span class="value">{{ currentGame()?.moves }}</span>
+                </div>
+                <div class="stat">
+                  <span class="label">Aciertos:</span>
+                  <span class="value">{{ getPlayerMatches() }}</span>
+                </div>
+              </div>
+            </div>
+          } @else {
+            <div class="multiplayer-result">
+              @if (isTieGame()) {
+                <h3>🤝 ¡Empate!</h3>
+                <p class="tie-message">Ambos jugadores han logrado el mismo número de aciertos.</p>
+              } @else {
+                <h3>🏆 Resultado Final</h3>
+              }
+              <div class="players-ranking">
+                @for (player of getSortedPlayers(); track player.email; let i = $index) {
+                  <div class="player-result" 
+                       [class.winner]="player.gameResult === 'win'"
+                       [class.tie]="player.gameResult === 'tie'">
+                    <div class="position">{{ i + 1 }}°</div>
+                    <div class="player-name">{{ player.name }}</div>
+                    <div class="player-score">{{ player.matches }} aciertos</div>
+                    @if (player.gameResult === 'win') {
+                      <div class="winner-badge">🏆</div>
+                    } @else if (player.gameResult === 'tie') {
+                      <div class="tie-badge">🤝</div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <div class="game-actions">
+            <button class="btn btn-primary" (click)="playAgain()">
+              🎮 Jugar de Nuevo
+            </button>
+            <button class="btn btn-secondary" (click)="goHome()">
+              🏠 Ir al Inicio
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Pause Overlay -->
+    @if (isPaused() && currentGame()?.status === 'playing') {
+      <div class="pause-overlay">
+        <div class="pause-modal">
+          <h2>⏸️ Juego Pausado</h2>
+          <p>El tiempo se ha detenido</p>
+          <button class="btn btn-primary" (click)="resumeGame()">
+            ▶️ Continuar
+          </button>
+        </div>
+      </div>
+    }
+
+  } @else {
+    <div class="loading-container">
+      <div class="loading-content">
+        <div class="spinner-large"></div>
+        <h2>Cargando juego...</h2>
+      </div>
+    </div>
+  }
+</div> 

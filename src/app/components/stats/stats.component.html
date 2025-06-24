@@ -1,0 +1,255 @@
+<div class="stats-container">
+  <!-- Header -->
+  <header class="stats-header">
+    <div class="header-content">
+      <h1>📊 Estadísticas</h1>
+      <button routerLink="/" class="btn btn-outline">
+        ← Volver al Inicio
+      </button>
+    </div>
+  </header>
+
+  <div class="stats-content">
+    <!-- User Personal Stats -->
+    @if (userStats()) {
+      <section class="personal-stats">
+        <h2>Mis Estadísticas</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">🎯</div>
+            <div class="stat-content">
+              <h3>{{ userStats()?.totalMatches || 0 }}</h3>
+              <p>Total de Aciertos</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🎮</div>
+            <div class="stat-content">
+              <h3>{{ userStats()?.totalGames || 0 }}</h3>
+              <p>Partidas Jugadas</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⏱️</div>
+            <div class="stat-content">
+              <h3>{{ formatTime(userStats()?.averageTime || 0) }}</h3>
+              <p>Tiempo Promedio</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🏆</div>
+            <div class="stat-content">
+              <h3>{{ Math.round(userStats()?.winRate || 0) }}%</h3>
+              <p>Tasa de Éxito</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⚡</div>
+            <div class="stat-content">
+              <h3>{{ formatTime(userStats()?.bestTime || 0) }}</h3>
+              <p>Mejor Tiempo</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- Global Stats -->
+    <section class="global-stats">
+      <h2>Estadísticas Globales del Juego</h2>
+      <div class="stats-grid">
+        <div class="stat-card global">
+          <div class="stat-icon">👥</div>
+          <div class="stat-content">
+            <h3>{{ globalStats()?.totalPlayers || 0 }}</h3>
+            <p>Jugadores Registrados</p>
+          </div>
+        </div>
+        <div class="stat-card global">
+          <div class="stat-icon">🎯</div>
+          <div class="stat-content">
+            <h3>{{ globalStats()?.totalGames || 0 }}</h3>
+            <p>Partidas Jugadas</p>
+          </div>
+        </div>
+        <div class="stat-card global">
+          <div class="stat-icon">🎪</div>
+          <div class="stat-content">
+            <h3>{{ globalStats()?.totalMatches || 0 }}</h3>
+            <p>Aciertos Totales</p>
+          </div>
+        </div>
+        <div class="stat-card global">
+          <div class="stat-icon">📈</div>
+          <div class="stat-content">
+            <h3>{{ Math.round(globalStats()?.averageMatchesPerGame || 0) }}</h3>
+            <p>Promedio por Partida</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent Matches with Tabs -->
+    <section class="recent-matches">
+      <h2>Historial de Partidas (Más Recientes Primero)</h2>
+      
+      <!-- Tabs for Match Mode -->
+      <div class="match-tabs">
+        <button 
+          class="tab-button" 
+          [class.active]="activeMatchTab() === 'single'"
+          (click)="setActiveMatchTab('single')">
+          👤 Un Jugador
+        </button>
+        <button 
+          class="tab-button" 
+          [class.active]="activeMatchTab() === 'multi'"
+          (click)="setActiveMatchTab('multi')">
+          👥 Dos Jugadores
+        </button>
+      </div>
+
+      <!-- Match List -->
+      <div class="matches-list">
+        @if (activeMatchTab() === 'single') {
+          <!-- Single Player Matches -->
+          @for (match of paginatedMatches().items; track match.partida.id) {
+            <div class="match-card single-player">
+              <div class="match-header">
+                <div class="match-date">
+                  📅 {{ formatDate(match.partida.fecha) }}
+                </div>
+                <div class="match-level">
+                  {{ match.partida.nivel?.toUpperCase() || 'N/A' }}
+                </div>
+                <div class="match-type">
+                  <span class="mode-badge single">Un Jugador</span>
+                </div>
+              </div>
+              <div class="match-players">
+                @for (player of match.players; track player.user.id) {
+                  <div class="player-result single-player-result">
+                    <div class="player-name">
+                      {{ player.user.name }}
+                    </div>
+                    <div class="player-stats">
+                      <span>{{ player.aciertos }} aciertos</span>
+                      <span>{{ formatTime(player.tiempo) }}</span>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          } @empty {
+            <div class="empty-state">
+              <p>No hay partidas individuales</p>
+            </div>
+          }
+        } @else {
+          <!-- Multiplayer Matches -->
+          @for (match of paginatedMatches().items; track match.partida.id) {
+            <div class="match-card multiplayer">
+              <div class="match-header">
+                <div class="match-date">
+                  📅 {{ formatDate(match.partida.fecha) }}
+                </div>
+                <div class="match-level">
+                  {{ match.partida.nivel?.toUpperCase() || 'N/A' }}
+                </div>
+                <div class="match-type">
+                  <span class="mode-badge multi">Dos Jugadores</span>
+                </div>
+              </div>
+              <div class="match-players">
+                @for (player of match.players; track player.user.id) {
+                  <div class="player-result" 
+                       [class.winner]="player.isWinner"
+                       [class.tie]="player.isTie">
+                    <div class="player-name">
+                      {{ player.user.name }}
+                      @if (player.isWinner) {
+                        <span class="winner-badge">🏆</span>
+                      } @else if (player.isTie) {
+                        <span class="tie-badge">🤝</span>
+                      }
+                    </div>
+                    <div class="player-stats">
+                      <span>{{ player.aciertos }} aciertos</span>
+                      <span>{{ formatTime(player.tiempo) }}</span>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          } @empty {
+            <div class="empty-state">
+              <p>No hay partidas multijugador</p>
+            </div>
+          }
+        }
+      </div>
+
+      <!-- Paginación -->
+      @if (paginatedMatches().pagination.totalItems > 0) {
+        <app-pagination
+          [currentPage]="paginatedMatches().pagination.currentPage"
+          [totalPages]="paginatedMatches().pagination.totalPages"
+          [totalItems]="paginatedMatches().pagination.totalItems"
+          [itemsPerPage]="paginatedMatches().pagination.itemsPerPage"
+          [startIndex]="paginatedMatches().pagination.startIndex"
+          [endIndex]="paginatedMatches().pagination.endIndex"
+          [hasNextPage]="paginatedMatches().pagination.hasNextPage"
+          [hasPreviousPage]="paginatedMatches().pagination.hasPreviousPage"
+          (pageChange)="onMatchesPageChange($event)"
+        ></app-pagination>
+      }
+    </section>
+
+    <!-- Top Players with Pagination -->
+    <section class="top-players-preview">
+      <div class="section-header">
+        <h2>Top Jugadores</h2>
+        <a routerLink="/ranking" class="btn btn-primary">Ver Ranking Completo</a>
+      </div>
+      <div class="top-players-list">
+        @for (player of paginatedPlayers().items; track player.user.id; let i = $index) {
+          <div class="top-player-item">
+            <div class="player-rank">{{ getPlayerGlobalRank(player, i) }}</div>
+            <div class="player-avatar">
+              {{ player.user.name.charAt(0).toUpperCase() }}
+            </div>
+            <div class="player-info">
+              <span class="player-name">{{ player.user.name }}</span>
+              <span class="player-stats">
+                {{ player.totalMatches }} aciertos • {{ player.totalGames }} partidas
+              </span>
+            </div>
+            <div class="player-score">
+              {{ Math.round(player.winRate) }}%
+            </div>
+            @if (getPlayerGlobalRank(player, i) === 1) {
+              <div class="crown">👑</div>
+            }
+          </div>
+        } @empty {
+          <div class="empty-state">
+            <p>No hay jugadores aún</p>
+          </div>
+        }
+      </div>
+
+      <!-- Paginación para top players -->
+      <app-pagination
+        [currentPage]="paginatedPlayers().pagination.currentPage"
+        [totalPages]="paginatedPlayers().pagination.totalPages"
+        [totalItems]="paginatedPlayers().pagination.totalItems"
+        [itemsPerPage]="paginatedPlayers().pagination.itemsPerPage"
+        [startIndex]="paginatedPlayers().pagination.startIndex"
+        [endIndex]="paginatedPlayers().pagination.endIndex"
+        [hasNextPage]="paginatedPlayers().pagination.hasNextPage"
+        [hasPreviousPage]="paginatedPlayers().pagination.hasPreviousPage"
+        (pageChange)="onPlayersPageChange($event)"
+      ></app-pagination>
+    </section>
+  </div>
+</div> 

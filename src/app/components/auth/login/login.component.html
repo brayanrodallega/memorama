@@ -1,0 +1,72 @@
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h1>🧠 Memorama</h1>
+          <h2>Iniciar Sesión</h2>
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+          @if (errorMessage()) {
+            <div class="error-message">
+              {{ errorMessage() }}
+            </div>
+          }
+
+          <div class="form-group">
+            <label for="email">Correo Electrónico</label>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              class="form-control"
+              [class.error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+              placeholder="tu@email.com"
+            >
+            @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+              <div class="field-error">
+                @if (loginForm.get('email')?.errors?.['required']) {
+                  El correo es requerido
+                }
+                @if (loginForm.get('email')?.errors?.['email']) {
+                  Ingresa un correo válido
+                }
+              </div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="password">Contraseña</label>
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              class="form-control"
+              [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+              placeholder="••••••••"
+            >
+            @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+              <div class="field-error">
+                La contraseña es requerida
+              </div>
+            }
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="loginForm.invalid || isLoading()"
+          >
+            @if (isLoading()) {
+              <span class="spinner"></span>
+              Iniciando sesión...
+            } @else {
+              Iniciar Sesión
+            }
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          <p>¿No tienes cuenta? <a routerLink="/auth/register">Regístrate aquí</a></p>
+        </div>
+      </div>
+    </div> 

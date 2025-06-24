@@ -1,0 +1,89 @@
+<div class="pagination-container" *ngIf="totalPages > 1">
+  <!-- Información de la paginación -->
+  <div class="pagination-info">
+    <span class="info-text">
+      Mostrando {{ startIndex }}-{{ endIndex }} de {{ totalItems }} elementos
+    </span>
+  </div>
+  
+  <!-- Controles de paginación -->
+  <div class="pagination-controls">
+    <!-- Botón anterior -->
+    <button 
+      class="pagination-btn prev-btn"
+      [disabled]="!hasPreviousPage"
+      (click)="onPreviousPage()"
+      [class.disabled]="!hasPreviousPage"
+    >
+      <span class="btn-icon">←</span>
+      <span class="btn-text">Anterior</span>
+    </button>
+    
+    <!-- Números de página -->
+    <div class="page-numbers">
+      <!-- Primera página si no está visible -->
+      <button
+        *ngIf="showFirstPage"
+        class="page-btn"
+        [class.active]="currentPage === 1"
+        (click)="onPageClick(1)"
+      >
+        1
+      </button>
+      
+      <!-- Separador si hay salto -->
+      <span *ngIf="showFirstSeparator" class="page-separator">...</span>
+      
+      <!-- Páginas visibles -->
+      <button
+        *ngFor="let page of visiblePages()"
+        class="page-btn"
+        [class.active]="currentPage === page"
+        (click)="onPageClick(page)"
+      >
+        {{ page }}
+      </button>
+      
+      <!-- Separador si hay salto -->
+      <span *ngIf="showLastSeparator" class="page-separator">...</span>
+      
+      <!-- Última página si no está visible -->
+      <button
+        *ngIf="showLastPage"
+        class="page-btn"
+        [class.active]="currentPage === totalPages"
+        (click)="onPageClick(totalPages)"
+      >
+        {{ totalPages }}
+      </button>
+    </div>
+    
+    <!-- Botón siguiente -->
+    <button 
+      class="pagination-btn next-btn"
+      [disabled]="!hasNextPage"
+      (click)="onNextPage()"
+      [class.disabled]="!hasNextPage"
+    >
+      <span class="btn-text">Siguiente</span>
+      <span class="btn-icon">→</span>
+    </button>
+  </div>
+  
+  <!-- Selector de elementos por página -->
+  <div class="items-per-page" *ngIf="showItemsPerPageSelector">
+    <label>
+      <span>Elementos por página:</span>
+      <select 
+        class="items-select"
+        [value]="itemsPerPage"
+        (change)="onItemsPerPageChange($event)"
+      >
+        <option value="6">6</option>
+        <option value="12">12</option>
+        <option value="24">24</option>
+        <option value="50">50</option>
+      </select>
+    </label>
+  </div>
+</div> 
